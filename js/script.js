@@ -50,13 +50,37 @@ const quotes = [
 	}
 ];
 
-document.getElementById('loadQuote').addEventListener("click", printQuote, false);
+// check for quote object properties lambdas
+const checkCitation = (quote) => quote.citation ?
+								 '<span class="citation">' + quote.citation + '</span>' : '';
+const checkDate = (quote) => quote.date ? 
+							 '<span class="year">' + quote.date + '</span>' : '';
 
-function printQuote() {
+// printQuote function get a random quote obj from the global array and prints it on the screen
+function printQuote(array) {
+	if (array.length === 5)
+		return array;
 	
+	let quote = getRandomQuote(quotes);  // gets random quote
+	
+	if (array.includes(quote))
+		return printQuote(array);
+	
+	let html = '<p class="quote">' + quote.quote + '</p>' +
+			   '<p class="source">' + quote.source +
+			        checkCitation(quote) +
+					checkDate(quote) +
+				'</p>';
+				
+	document.getElementById('quote-box').innerHTML = html;
+	array.push(quote);
+	
+	return array;
 }
 
 // recieves an array, randomly selects an element, outputs the element
 function getRandomQuote(array) {
 	return array[Math.floor(Math.random() * array.length - 1) + 1];
 }
+
+document.getElementById('loadQuote').addEventListener("click", printQuote, false);

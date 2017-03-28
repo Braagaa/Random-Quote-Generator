@@ -56,6 +56,7 @@ function printQuote() {
 	
 }
 
+// recieves an array, randomly selects an element, outputs the element
 function getRandomQuote(array) {
-	
+	return array[Math.floor(Math.random() * array.length - 1) + 1];
 }

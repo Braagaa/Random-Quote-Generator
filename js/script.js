@@ -50,30 +50,33 @@ const quotes = [
 	}
 ];
 
+// getId is a helper function to help shorten lengthy code
+const getId = (id) => document.getElementById(id);
+
 // check for quote object properties lambdas
 const checkCitation = (quote) => quote.citation ?
 								 '<span class="citation">' + quote.citation + '</span>' : '';
 const checkDate = (quote) => quote.date ? 
 							 '<span class="year">' + quote.date + '</span>' : '';
 
-// printQuote function get a random quote obj from the global array and prints it on the screen
+// printQuote is a recursion function to get a random quote obj from the global array and prints it on the screen
 function printQuote(array) {
-	if (array.length === 5)
-		return array;
+	if (array.length === 5)  // if the array is at 5, it is assumed that all quotes have been printed and now we send a empty array back to restart the process again
+		return printQuote([]);
 	
 	let quote = getRandomQuote(quotes);  // gets random quote
 	
-	if (array.includes(quote))
+	if (array.includes(quote))  // if the array already includes the referenced randomly generated quote object, then we send in the same array and try again 
 		return printQuote(array);
 	
-	let html = '<p class="quote">' + quote.quote + '</p>' +
+	let html = '<p class="quote">' + quote.quote + '</p>' +  //creates the html string
 			   '<p class="source">' + quote.source +
-			        checkCitation(quote) +
+			        checkCitation(quote) +  // checks if object contain the properties needed, if not send back an empty string
 					checkDate(quote) +
 				'</p>';
 				
-	document.getElementById('quote-box').innerHTML = html;
-	array.push(quote);
+	document.getElementById('quote-box').innerHTML = html;  // prints to the screen
+	array.push(quote);  // pushes the quote object to the array as a way to make sure we have used the quote already
 	
 	return array;
 }
@@ -83,4 +86,21 @@ function getRandomQuote(array) {
 	return array[Math.floor(Math.random() * array.length - 1) + 1];
 }
 
-document.getElementById('loadQuote').addEventListener("click", printQuote, false);
+// runQuotes starts the printing process by creating a setInterval function so that it prints to the screen every 30 seconds if user has not clicked on the button to do so
+const runQuotes = function(array) {
+	let printQuotes = setInterval(function() {     // assigns the window with a callback function every 30 sec
+		array = printQuote(array);
+	}, 30000);
+	
+	getId('loadQuote').addEventListener('click', function() {     // this function also assign a click event handler so the user can click to the next quote
+		clearInterval(printQuotes);             // ends the runQuotes setInterval to make sure the timer resets to 0
+		array = printQuote(array);
+		printQuotes = setInterval(function() {  // this reassigns printQuotes so the the timer is active and restarts the process again
+			array = printQuote(array);
+		}, 30000);
+	});
+	
+	return printQuotes;
+}
+
+runQuotes([]);  // runs the quotes to print to the screen

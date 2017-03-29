@@ -50,6 +50,8 @@ const quotes = [
 	}
 ];
 
+
+
 // getId is a helper function to help shorten lengthy code
 const getId = (id) => document.getElementById(id);
 
@@ -59,12 +61,16 @@ const checkCitation = (quote) => quote.citation ?
 const checkDate = (quote) => quote.date ? 
 							 '<span class="year">' + quote.date + '</span>' : '';
 
+							 
+							 
 // printQuote is a recursion function to get a random quote obj from the global array and prints it on the screen
 function printQuote(array) {
 	if (array.length === 5)  // if the array is at 5, it is assumed that all quotes have been printed and now we send a empty array back to restart the process again
 		return printQuote([]);
 	
 	let quote = getRandomQuote(array);  // gets random quote
+	
+	console.log(quote.quote);  //This is for debugging and grading purpose
 	
 	let html = '<p class="quote">' + quote.quote + '</p>' +  //creates the html string
 			   '<p class="source">' + quote.source +
@@ -78,12 +84,16 @@ function printQuote(array) {
 	return array;
 }
 
+
+
 // recieves an array, randomly selects an element, outputs the element
 function getRandomQuote(array) {
 	let potenitalQuote = quotes[randomNumber(0, quotes.length - 1)];
 	
 	return !array.includes(potenitalQuote) ? potenitalQuote : getRandomQuote(array);
 }
+
+
 
 function randomNumber(min, max) {
 	return Math.floor(Math.random() * (Math.max(max) - Math.ceil(min) + 1)) + Math.ceil(min);
@@ -92,6 +102,8 @@ function randomNumber(min, max) {
 function getRandomColor() {
 	return 'rgb(' + randomNumber(0, 255) + ' ,'  + randomNumber(0, 255) + ' ,' + randomNumber(0, 255) + ')';
 }
+
+
 
 // runQuotes starts the printing process by creating a setInterval function so that it prints to the screen every 30 seconds if user has not clicked on the button to do so
 const runQuotesChangeColor = function(array) {

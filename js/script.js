@@ -30,7 +30,7 @@ const quotes = [
 		occupation: ['computer programmer', 'author']
 	},
 	{
-		quote: "Fear, ...can make you do more wrong than hate or jealousy. If you're afraid you dont't " +
+		quote: "Fear, ...can make you do more wrong than hate or jealousy. If you're afraid you don't " +
 			   "commit yourself to life completely; fear makes you always, always hold something back.",
 		source: 'Philip K.Dick',
 		citation: "Flow My Tears, The Policeman Said",
@@ -64,10 +64,7 @@ function printQuote(array) {
 	if (array.length === 5)  // if the array is at 5, it is assumed that all quotes have been printed and now we send a empty array back to restart the process again
 		return printQuote([]);
 	
-	let quote = getRandomQuote(quotes);  // gets random quote
-	
-	if (array.includes(quote))  // if the array already includes the referenced randomly generated quote object, then we send in the same array and try again 
-		return printQuote(array);
+	let quote = getRandomQuote(array);  // gets random quote
 	
 	let html = '<p class="quote">' + quote.quote + '</p>' +  //creates the html string
 			   '<p class="source">' + quote.source +
@@ -83,24 +80,40 @@ function printQuote(array) {
 
 // recieves an array, randomly selects an element, outputs the element
 function getRandomQuote(array) {
-	return array[Math.floor(Math.random() * array.length - 1) + 1];
+	let potenitalQuote = quotes[randomNumber(0, quotes.length - 1)];
+	
+	return !array.includes(potenitalQuote) ? potenitalQuote : getRandomQuote(array);
+}
+
+function randomNumber(min, max) {
+	return Math.floor(Math.random() * (Math.max(max) - Math.ceil(min) + 1)) + Math.ceil(min);
+}
+
+function getRandomColor() {
+	return 'rgb(' + randomNumber(0, 255) + ' ,'  + randomNumber(0, 255) + ' ,' + randomNumber(0, 255) + ')';
 }
 
 // runQuotes starts the printing process by creating a setInterval function so that it prints to the screen every 30 seconds if user has not clicked on the button to do so
-const runQuotes = function(array) {
+const runQuotesChangeColor = function(array) {
 	let printQuotes = setInterval(function() {     // assigns the window with a callback function every 30 sec
+		
 		array = printQuote(array);
+		document.body.style.backgroundColor = getRandomColor(); // changes the color of background to a random rgb(0 - 255) color
 	}, 30000);
 	
 	getId('loadQuote').addEventListener('click', function() {     // this function also assign a click event handler so the user can click to the next quote
 		clearInterval(printQuotes);             // ends the runQuotes setInterval to make sure the timer resets to 0
+		
 		array = printQuote(array);
+		document.body.style.backgroundColor = getRandomColor();
+		
 		printQuotes = setInterval(function() {  // this reassigns printQuotes so the the timer is active and restarts the process again
 			array = printQuote(array);
+			document.body.style.backgroundColor = getRandomColor();
 		}, 30000);
 	});
 	
 	return printQuotes;
 }
 
-runQuotes([]);  // runs the quotes to print to the screen
+runQuotesChangeColor([]);  // runs the quotes to print to the screen
